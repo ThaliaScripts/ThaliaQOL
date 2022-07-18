@@ -1,0 +1,97 @@
+plugins {
+    id "net.minecraftforge.gradle.forge" version "6f5327"
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+    id "org.spongepowered.mixin" version "d5f9873d60"
+}
+
+version = "0.0.1"
+group = "com.thalia"
+archivesBaseName = "ThaliaQOL"
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+minecraft {
+    version = "1.8.9-11.15.1.2318-1.8.9"
+    runDir = "run"
+    mappings = "stable_22"
+    makeObfSourceJar = false
+//    clientRunArgs += "--tweakClass org.spongepowered.asm.launch.MixinTweaker"
+    clientRunArgs += "--tweakClass gg.essential.loader.stage0.EssentialSetupTweaker"
+    clientRunArgs += "--mixin mixins.thaliaqol.json"
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo.spongepowered.org/repository/maven-public/" }
+    maven { url "https://repo.sk1er.club/repository/maven-public" }
+    maven { url "https://repo.sk1er.club/repository/maven-releases/" }
+}
+
+configurations {
+    packageLib
+    implementaton.extendsFrom(packageLib)
+}
+
+
+dependencies {
+
+
+    packageLib("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
+        exclude module: 'guava'
+        exclude module: 'commons-io'
+        exclude module: 'gson'
+    }
+    annotationProcessor("org.spongepowered:mixin:0.7.11-SNAPSHOT")
+    packageLib("gg.essential:loader-launchwrapper:1.1.1")
+    implementation("gg.essential:essential-1.8.9-forge:1498")
+}
+
+mixin {
+    add sourceSets.main, "mixins.thaliaqol.refmap.json"
+}
+
+jar {
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest.attributes(
+            "FMLCorePluginContainsFMLMod": true,
+            "ForceLoadAsMod": true,
+            "MixinConfigs": "mixins.thaliaqol.json",
+            "ModSide": "CLIENT",
+//            "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+            "TweakClass": "gg.essential.loader.stage0.EssentialSetupTweaker",
+            "TweakOrder": "0",
+    )
+
+    from {
+        configurations.packageLib.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+sourceSets {
+    main { output.resourcesDir = java.outputDir }
+}
