@@ -1,0 +1,9 @@
+{
+  "compatibilityLevel": "JAVA_8",
+  "package": "dev.thalia.mixins",
+  "refmap": "mixins.thaliaqol.refmap.json",
+  "mixins": [
+    "PlayerControllerAccessor",
+  ],
+  "verbose": true
+}
