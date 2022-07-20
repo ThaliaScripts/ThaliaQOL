@@ -18,9 +18,39 @@ public class Config extends Vigilant {
     )
     public boolean autoRogue = false;
 
+    @Property(
+            type = PropertyType.SWITCH,
+            name = "Secret Aura",
+            description = "Automatically grab dungeon secrets",
+            category = "Dungeons"
+    )
+    public boolean secretAura = false;
+
+    @Property(
+            type = PropertyType.DECIMAL_SLIDER,
+            name = "Reach",
+            description = "The distance you can reach secrets",
+            category = "Dungeons",
+            minF = 2f,
+            maxF = 6f,
+            decimalPlaces = 1
+    )
+    public float reach = 5f;
+
+    @Property(
+            type = PropertyType.TEXT,
+            name = "Item name",
+            description = "The item that is used to click on secrets",
+            category = "Dungeons"
+    )
+    public String itemName = "";
+
     public Config() {
         super(new File("./config/ThaliaQOL/config.toml"), "ThaliaQOL", new JVMAnnotationPropertyCollector(), new ConfigSorting());
         initialize();
+
+        addDependency("reach", "secretAura");
+        addDependency("itemName", "secretAura");
     }
 
     public static class ConfigSorting extends SortingBehavior {

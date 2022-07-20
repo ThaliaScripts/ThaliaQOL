@@ -4,6 +4,8 @@
   "refmap": "mixins.thaliaqol.refmap.json",
   "mixins": [
     "PlayerControllerAccessor",
+    "PlayerSPMixin",
+    "NetworkManagerMixin"
   ],
   "verbose": true
 }

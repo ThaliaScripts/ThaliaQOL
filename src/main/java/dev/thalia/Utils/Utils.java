@@ -1,5 +1,6 @@
 package dev.thalia.Utils;
 
+import com.google.common.collect.Iterables;
 import com.ibm.icu.impl.BOCU;
 import dev.thalia.ThaliaQOL;
 import gg.essential.universal.UChat;
@@ -22,6 +23,10 @@ public class Utils {
 
     public static String removeFormatting(String input) {
         return input.replaceAll("§[0-9a-fk-or]", "");
+    }
+
+    public static <T> T firstOrNull(Iterable<T> iterable) {
+        return (T) Iterables.getFirst(iterable, null);
     }
 
     private int ticks = 0;
